@@ -10,10 +10,10 @@ public class DayOne {
         List<string> lines = parseFile("day1input.txt");
 
         int partAResult = partA(lines);
-        Console.WriteLine(partAResult);
+        Console.WriteLine($"Part A: {partAResult}");
 
         int partBResult = partB(lines);
-        Console.WriteLine(partBResult);
+        Console.WriteLine($"Part B: {partBResult}");
     }
 
     private static List<string> parseFile(string filename)
@@ -60,6 +60,7 @@ public class DayOne {
             }
 
         }
+        allElves.Add(currentElf);
         allElves.Sort();
         allElves.Reverse();
         int top3 = allElves.GetRange(0, 3).Sum();
