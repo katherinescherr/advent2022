@@ -8,10 +8,6 @@ using System.Text.RegularExpressions;
 public class RopeGrid {
     public char[,] grid;
 
-    public (int x, int y) tailIndex;
-
-    public (int x, int y) headIndex;
-
     public (int x, int y)[] ropeArray;
 
     public RopeGrid(int x, int y, int count) {
@@ -114,7 +110,7 @@ public class RopeGrid {
 public class DayNine {
     public static void Main() 
     {
-        List<string> lines = parseFile("input.txt");
+        List<string> lines = parseFile("test.txt");
 
         int partAResult = partA(lines);
         Console.WriteLine($"Part A: {partAResult}");
@@ -142,7 +138,6 @@ public class DayNine {
         foreach (var line in lines)
         {
             var splitLine = line.Split(" ");
-            Console.WriteLine(line);
             grid.moveRope(splitLine[0], int.Parse(splitLine[1]));
         }
         return grid.tailCount();
@@ -150,6 +145,12 @@ public class DayNine {
 
     private static int partB(List<string> lines) 
     {
-        return 0;
+        var grid = new RopeGrid(1000, 1000, 10);
+        foreach (var line in lines)
+        {
+            var splitLine = line.Split(" ");
+            grid.moveRope(splitLine[0], int.Parse(splitLine[1]));
+        }
+        return grid.tailCount();
     }
 }
