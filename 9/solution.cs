@@ -12,7 +12,9 @@ public class RopeGrid {
 
     public (int x, int y) headIndex;
 
-    public RopeGrid(int x, int y) {
+    public (int x, int y)[] ropeArray;
+
+    public RopeGrid(int x, int y, int count) {
         grid = new char[y,x];
         for (var i = 0; i < x; i++)
         {
@@ -21,9 +23,12 @@ public class RopeGrid {
                 grid[j,i] = '.';
             }
         }
-        tailIndex = (x: x / 2, y: y / 2);
-        headIndex = (x: x / 2, y: y / 2);
-        grid[tailIndex.y,tailIndex.x] = '#';
+        ropeArray = new (int x, int y)[count];
+        for (var i = 0; i < count; i++)
+        {
+            ropeArray[i] = (x: x / 2, y: y / 2);
+        }
+        grid[x / 2, y / 2] = '#';
     }
 
     public void moveRope(string direction, int count)
@@ -33,31 +38,34 @@ public class RopeGrid {
             switch (direction)
             {
                 case "R":
-                    headIndex.x += 1;
+                    ropeArray[0].x += 1;
                     break;
                 case "L":
-                    headIndex.x -= 1;
+                    ropeArray[0].x -= 1;
                     break;
                 case "U":
-                    headIndex.y += 1;
+                    ropeArray[0].y += 1;
                     break;
                 case "D":
-                    headIndex.y -= 1;
+                    ropeArray[0].y -= 1;
                     break;
             }
-            if (Math.Abs(headIndex.x - tailIndex.x) > 1 || Math.Abs(headIndex.y - tailIndex.y) > 1) {
-                if ((headIndex.x - tailIndex.x) > 0) {
-                    tailIndex.x += 1;
-                } else if ((tailIndex.x - headIndex.x) > 0) {
-                    tailIndex.x -= 1;
+            for (var index = 1; index < ropeArray.Length; index++)
+            {
+                if (Math.Abs(ropeArray[index - 1].x - ropeArray[index].x) > 1 || Math.Abs(ropeArray[index - 1].y - ropeArray[index].y) > 1) {
+                    if ((ropeArray[index - 1].x - ropeArray[index].x) > 0) {
+                        ropeArray[index].x += 1;
+                    } else if ((ropeArray[index].x - ropeArray[index - 1].x) > 0) {
+                        ropeArray[index].x -= 1;
+                    }
+                    if ((ropeArray[index - 1].y - ropeArray[index].y) > 0) {
+                        ropeArray[index].y += 1;
+                    } else if ((ropeArray[index].y - ropeArray[index - 1].y) > 0) {
+                        ropeArray[index].y -= 1;
+                    }
                 }
-                if ((headIndex.y - tailIndex.y) > 0) {
-                    tailIndex.y += 1;
-                } else if ((tailIndex.y - headIndex.y) > 0) {
-                    tailIndex.y -= 1;
-                }
-                grid[tailIndex.y, tailIndex.x] = '#';
             }
+            grid[ropeArray.Last().y, ropeArray.Last().x] = '#';
         }
     }
 
@@ -81,20 +89,19 @@ public class RopeGrid {
         {
             for (var x = 0; x < grid.GetLength(1); x++)
             {
-                if (x == headIndex.x && y == headIndex.y && !printTailStops)
-                {
-                    Console.Write("H");
-                }
-                else if (x == tailIndex.x && y == tailIndex.y && !printTailStops)
-                {
-                    Console.Write("T");
-                }
-                else if (!printTailStops)
-                {
-                    Console.Write(".");
-                }
-                else {
+                if (printTailStops) {
                     Console.Write(grid[y,x]);
+                } else {
+                    var printChar = ".";
+
+                    for (var i = ropeArray.Count() - 1; i >= 0; i--)
+                    {
+                        if (x == ropeArray[i].x && y == ropeArray[i].y)
+                        {
+                            printChar = (i == 0) ? "H" : $"{i}";
+                        }
+                    }
+                    Console.Write(printChar);
                 }
             }
             Console.WriteLine("");
@@ -131,7 +138,7 @@ public class DayNine {
 
     private static int partA(List<string> lines) 
     {
-        var grid = new RopeGrid(1000, 1000);
+        var grid = new RopeGrid(1000, 1000, 2);
         foreach (var line in lines)
         {
             var splitLine = line.Split(" ");
